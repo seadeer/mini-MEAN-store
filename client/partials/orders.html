@@ -1,0 +1,22 @@
+<div class="subdiv" ng-controller = "ordersController as OC">
+    <h2>Add New Order</h2>
+    <form>
+        <p><select ng-model = 'OC.theCustomer' ng-options = 'customer.name for customer in OC.customers'></select>
+        <select ng-model = 'OC.theProduct' ng-options = 'product.name for product in OC.products'></select>
+        <select ng-model = 'OC.theQuantity'>
+            <option ng-repeat = 'i in [] | range:OC.theProduct.quantity' value={{$index}}>{{$index}}</option></select>
+        </select>
+        </p>
+        <p><input type="submit" value="Order" ng-click="OC.orderProduct()"></p>
+    </form>
+    <p>Filter: <input type="text" ng-model="query"></p>
+   
+<table>
+    <thead>
+        <td>Customer</td><td>Product</td><td>Quantity</td><td>Date</td>
+    </thead>
+    <tbody ng-repeat="product in OC.products |filter : query">
+    <tr ng-repeat= "order in product.orders "><td>{{ order.order.customer }} </td><td>{{ product.name }}</td><td>{{ order.order.quantity }}</td><td>{{ order.order.date | date: 'short'}}</td>
+    </tr>
+    </tbody>
+</div>

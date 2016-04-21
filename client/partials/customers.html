@@ -1,0 +1,17 @@
+<div ng-controller = "customersController as CC">
+    <div class = "error" ng-bind = 'CC.err'></div>
+    <form>
+    Name: <input type="text" ng-model = 'CC.newCustomer.name'>
+    <input type = "submit" value="Add" ng-click='CC.create()'>
+    <p>Filter: <input type="text" ng-model="filter_name"></p>
+    <table>
+        <thead>
+            <td>Customer Name</td><td>Created Date</td><td>Actions</td>
+        </thead>
+        <tr ng-repeat="cust in CC.customers | filter:filter_name">
+            <td>{{ cust.name }}</td>
+            <td>{{ cust.createdAt | date: 'short' }}</td>
+            <td><button ng-click='CC.delete($index)'>Remove</button></td>
+        </tr>
+    </table>    
+</div>
