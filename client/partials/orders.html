@@ -7,7 +7,7 @@
             <option ng-repeat = 'i in [] | range:OC.theProduct.quantity' value={{$index}}>{{$index}}</option></select>
         </select>
         </p>
-        <p><input type="submit" value="Order" ng-click="OC.orderProduct()"></p>
+        <p><input class="submit" type="submit" value="Order" ng-click="OC.orderProduct()"></p>
     </form>
     <p>Filter: <input type="text" ng-model="query"></p>
    

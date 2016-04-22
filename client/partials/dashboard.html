@@ -1,0 +1,30 @@
+<div class="subdiv" ng-controller = "dashboardController as DC">
+    <div id="sidebar">
+        <input type="text" value="search..." ng-model="query">
+    </div>
+    <div class="display" >
+        <div class="product" ng-repeat = "product in DC.products | limitTo:4 |filter:query">
+            <img src="{{product.image}}">
+            <div class="label">
+                <p>{{product.name}}</p>
+                <p>{{product.quantity}} left</p>
+            </div>
+        </div>
+        <h4><a href="#/products/">Show more...</a></h4>
+        <h4>Recent orders</h4>
+            <div ng-repeat="customer in DC.customers">
+            <div ng-repeat="order in customer.orders | orderBy: order.order.date:true">
+                
+                    {{order.order.date |date:'short'}} - {{customer.name}} purchased {{order.order.quantity}} {{order.order.product}} 
+                    
+                </div>
+            </div>
+            <h4><a href="#/orders/">Show more...</a></h4>
+        <h4>New Customers</h4>
+            <div ng-repeat="customer in DC.customers | orderBy: customer.createdAt:true">
+                <p>{{customer.name}} {{customer.createdAt |date:'short'}}
+            </div>
+        <h4><a href="#/customers/">Show more...</a></h4>
+    
+
+</div>

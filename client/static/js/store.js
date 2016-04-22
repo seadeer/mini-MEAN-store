@@ -7,12 +7,21 @@ store.config(function($routeProvider){
     .when('/', {
         templateUrl: '/partials/customers.html'
     })
+
     .when('/customers', {
     templateUrl: '/partials/customers.html'
   })
 
   .when('/orders', {
     templateUrl: '/partials/orders.html'
+  })
+
+  .when('/products', {
+    templateUrl: '/partials/products.html'
+  })
+
+  .when('/dashboard', {
+    templateUrl: '/partials/dashboard.html'
   })
 
   .otherwise('/', {
@@ -29,6 +38,29 @@ store.filter('range', function(){
             input.push(i);
         }
         return input;
+    };
+});
+
+store.filter('dateDelta', function(){
+    return function(input){
+        var mongoDate = new Date(input)
+        var timeNow = new Date();
+        
+        var delta = parseInt(timeNow - mongoDate);
+        console.log("Date filter input: ", mongoDate, "Time now:", timeNow, "Time difference", delta)
+        var days = Math.floor(delta/(1000*60*60*24));
+        var hours = Math.floor(delta/(1000*60*60) - days*24);
+        console.log("Days: ", days, "Hours: ",hours);
+        if(days > 0){
+            return toString(days) + " days" + toString(hours) + " hours ago";
+        }
+        else if (days < 1 && hours > 0){
+            return toString(hours) + " hours ago";
+        }
+        else if (hours < 1){
+            var minutes = Math.floor(delta/(1000*60));
+            return toString(minutes) + " minutes ago";
+        }
     };
 });
 
@@ -145,10 +177,8 @@ store.controller('customersController', function(customerFactory){
         index();
     };
 
-
     
 });
-
 
 //orders controller
 store.controller('ordersController', function(customerFactory, productFactory){
@@ -161,6 +191,32 @@ store.controller('ordersController', function(customerFactory, productFactory){
         })
     }
     getCustomers();
+
+    var index = function(){
+        productFactory.index(function(data){
+            if(data){
+                that.products = data;
+            }
+        });
+    };
+
+    index();
+
+    this.orderProduct = function(){
+        var order = that;
+        productFactory.orderProduct(order);
+        customerFactory.orderProduct(order, function(data){
+            console.log(data);
+            index();
+            getCustomers();
+        });
+       
+        };
+    });
+
+//products controller
+store.controller('productsController', function(customerFactory, productFactory){
+    var that = this;
 
     var index = function(){
         productFactory.index(function(data){
@@ -189,17 +245,48 @@ store.controller('ordersController', function(customerFactory, productFactory){
         });
     };
 
-    this.orderProduct = function(){
-        var order = that;
-        productFactory.orderProduct(order);
-        customerFactory.orderProduct(order, function(data){
+});
+
+//DASHBOARD controller
+store.controller('dashboardController', function(customerFactory, productFactory){
+    var that = this;
+    var getCustomers = function(){
+    customerFactory.index(function(data){
+        if(data){
+            that.customers = data;
+        }
+    })
+    }
+    getCustomers();
+
+
+    var index = function(){
+        productFactory.index(function(data){
+            if(data){
+                that.products = data;
+            }
+        });
+    };
+
+    index();
+
+    this.create = function(){
+        console.log(that.newProduct);
+        productFactory.create(that.newProduct, function(data){
+            index();
+            that.newProduct = {};
+        });
+    };
+
+    this.delete = function(ind){
+        console.log(that.products[ind]);
+        var id = that.products[ind]._id;
+        productFactory.delete(id, function(data){
             console.log(data);
             index();
-            getCustomers();
         });
-       
-        };
-    });
+    };
 
+});
 
 
